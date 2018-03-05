@@ -3,7 +3,10 @@ import pandas as pd
 class Trader:
 
     def train(self, dataset):
-        print(dataset.head())
+        targets = dataset.loc[1:, 'open']
+        features = dataset.iloc[:-1]
+        print(targets.shape)
+        print(features.shape)
 
     def predict_action(self, row):
         return '1'
