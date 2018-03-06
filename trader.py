@@ -66,11 +66,16 @@ class Trader:
         input_data = row.values.reshape(1, -1)
         tomorrow_price = self.__reg.predict(input_data)[0]
         today_price = row[0]
+        # define variables
         gap = tomorrow_price - today_price
 
-        if self.__status == 0 and gap < 0:
+        if self.__status == 0:
+            self.__buy_price = today_price
             self.__status = 1
             return '1'
+        elif self.__status == 1 and gap < 0 and tomorrow_price > self.__buy_price:
+            self.__status = 0
+            return '-1'
         else:
             return '0'
 
