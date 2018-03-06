@@ -5,6 +5,7 @@ from sklearn.feature_selection import f_regression
 
 class Trader:
     reg = linear_model.LinearRegression()
+    status = 0
 
     def __process(self, dataset):
         targets = dataset.loc[1:, 'open']
@@ -18,13 +19,13 @@ class Trader:
         reg = self.reg
         reg.fit(features, targets)
 
-        print("Socre Training: ", reg.score(features, targets))
+        # print("Socre Training: ", reg.score(features, targets))
 
     def test(self, dataset):
         targets, features = self.__process(dataset)
 
         reg = self.reg
-        print("Score Testing: ", reg.score(features, targets))
+        # print("Score Testing: ", reg.score(features, targets))
 
     def selection(self, train_data, test_data):
         train_targets, train_features = self.__process(train_data)
@@ -61,7 +62,11 @@ class Trader:
         plt.show()
 
     def predict_action(self, row):
-        return '1'
+        if self.status == 0:
+            self.status = 1
+            return '1'
+        else:
+            return '0'
 
     def re_training(self, i):
         print(i)
@@ -97,16 +102,16 @@ if __name__ == '__main__':
     trader.train(training_data)
     
     testing_data = load_data(args.testing)
-    trader.test(testing_data)
+    # trader.test(testing_data)
 
     # feature selection
-    trader.selection(training_data, testing_data)
+    # trader.selection(training_data, testing_data)
 
     with open(args.output, 'w') as output_file:
-        for row in testing_data:
+        for index, row in testing_data.iterrows():
             # We will perform your action as the open price in the next day.
             action = trader.predict_action(row)
-            output_file.write(action)
+            output_file.write(action + '\n')
 
             # this is your option, you can leave it empty.
             # trader.re_training(i)
