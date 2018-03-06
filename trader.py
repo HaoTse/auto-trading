@@ -4,8 +4,9 @@ from sklearn import linear_model
 from sklearn.feature_selection import f_regression
 
 class Trader:
-    reg = linear_model.LinearRegression()
-    status = 0
+    __reg = linear_model.LinearRegression()
+    __status = 0
+    __buy_price = 0
 
     def __process(self, dataset):
         targets = dataset.loc[1:, 'open']
@@ -16,7 +17,7 @@ class Trader:
     def train(self, dataset):
         targets, features = self.__process(dataset)
 
-        reg = self.reg
+        reg = self.__reg
         reg.fit(features, targets)
 
         # print("Socre Training: ", reg.score(features, targets))
@@ -24,7 +25,7 @@ class Trader:
     def test(self, dataset):
         targets, features = self.__process(dataset)
 
-        reg = self.reg
+        reg = self.__reg
         # print("Score Testing: ", reg.score(features, targets))
 
     def selection(self, train_data, test_data):
@@ -62,8 +63,13 @@ class Trader:
         plt.show()
 
     def predict_action(self, row):
-        if self.status == 0:
-            self.status = 1
+        input_data = row.values.reshape(1, -1)
+        tomorrow_price = self.__reg.predict(input_data)[0]
+        today_price = row[0]
+        gap = tomorrow_price - today_price
+
+        if self.__status == 0 and gap < 0:
+            self.__status = 1
             return '1'
         else:
             return '0'
@@ -97,6 +103,7 @@ if __name__ == '__main__':
     load_data(args.training)
     # The following part is an example.
     # You can modify it at will.
+    # load data
     training_data = load_data(args.training)
     trader = Trader()
     trader.train(training_data)
@@ -107,6 +114,7 @@ if __name__ == '__main__':
     # feature selection
     # trader.selection(training_data, testing_data)
 
+    # output result
     with open(args.output, 'w') as output_file:
         for index, row in testing_data.iterrows():
             # We will perform your action as the open price in the next day.
