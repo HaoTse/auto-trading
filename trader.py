@@ -14,19 +14,20 @@ class Trader:
 
         return targets, features
 
-    def train(self, dataset):
+    def train(self, dataset, output_score=False):
         targets, features = self.__process(dataset)
 
         reg = self.__reg
         reg.fit(features, targets)
 
-        # print("Socre Training: ", reg.score(features, targets))
+        if output_score:
+            print("Socre Training: ", reg.score(features, targets))
 
     def test(self, dataset):
         targets, features = self.__process(dataset)
 
         reg = self.__reg
-        # print("Score Testing: ", reg.score(features, targets))
+        print("Score Testing: ", reg.score(features, targets))
 
     def selection(self, train_data, test_data):
         train_targets, train_features = self.__process(train_data)
@@ -79,8 +80,8 @@ class Trader:
         else:
             return '0'
 
-    def re_training(self, i):
-        print(i)
+    # def re_training(self, i):
+    #     print(i)
 
 def load_data(file_name):
     titles = ['open', 'high', 'low', 'close']
@@ -103,28 +104,32 @@ if __name__ == '__main__':
     parser.add_argument('--output',
                         default='output.csv',
                         help='output file name')
+    parser.add_argument('-s', '--select',
+                        action='store_true',
+                        help='feature selection mode')
+    parser.add_argument('--score',
+                        action='store_true',
+                        help='compute score')
     args = parser.parse_args()
     
-    load_data(args.training)
-    # The following part is an example.
-    # You can modify it at will.
     # load data
     training_data = load_data(args.training)
-    trader = Trader()
-    trader.train(training_data)
-    
     testing_data = load_data(args.testing)
-    # trader.test(testing_data)
+    trader = Trader()
 
     # feature selection
-    # trader.selection(training_data, testing_data)
+    if args.select:
+        trader.selection(training_data, testing_data)
+    else:
+        trader.train(training_data, args.score)
+        if args.score:
+            trader.test(testing_data)
+        # output result
+        with open(args.output, 'w') as output_file:
+            for index, row in testing_data.iterrows():
+                # We will perform your action as the open price in the next day.
+                action = trader.predict_action(row)
+                output_file.write(action + '\n')
 
-    # output result
-    with open(args.output, 'w') as output_file:
-        for index, row in testing_data.iterrows():
-            # We will perform your action as the open price in the next day.
-            action = trader.predict_action(row)
-            output_file.write(action + '\n')
-
-            # this is your option, you can leave it empty.
-            # trader.re_training(i)
+                # this is your option, you can leave it empty.
+                # trader.re_training(i)
