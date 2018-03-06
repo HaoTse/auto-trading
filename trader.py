@@ -1,12 +1,24 @@
 import pandas as pd
+from sklearn import linear_model
 
 class Trader:
+    reg = linear_model.LinearRegression()
 
     def train(self, dataset):
         targets = dataset.loc[1:, 'open']
         features = dataset.iloc[:-1]
-        print(targets.shape)
-        print(features.shape)
+
+        reg = self.reg
+        reg.fit(features, targets)
+
+        print("Socre Training: ", reg.score(features, targets))
+
+    def test(self, dataset):
+        targets = dataset.loc[1:, 'open']
+        features = dataset.iloc[:-1]
+
+        reg = self.reg
+        print("Score Testing: ", reg.score(features, targets))
 
     def predict_action(self, row):
         return '1'
@@ -45,6 +57,7 @@ if __name__ == '__main__':
     trader.train(training_data)
     
     testing_data = load_data(args.testing)
+    trader.test(testing_data)
     with open(args.output, 'w') as output_file:
         for row in testing_data:
             # We will perform your action as the open price in the next day.
