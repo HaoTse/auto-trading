@@ -3,19 +3,20 @@ import matplotlib.pyplot as plt
 from sklearn import linear_model
 from sklearn.feature_selection import f_regression
 
+
 class Trader:
     __reg = linear_model.LinearRegression()
     __status = 0
     __buy_price = 0
 
     def __process(self, dataset):
-        targets = dataset.loc[1:, 'open']
         features = dataset.iloc[:-1]
+        targets = dataset.loc[1:, 'open']
 
-        return targets, features
+        return features, targets
 
     def train(self, dataset, output_score=False):
-        targets, features = self.__process(dataset)
+        features, targets = self.__process(dataset)
 
         reg = self.__reg
         reg.fit(features, targets)
@@ -24,19 +25,26 @@ class Trader:
             print("Socre Training: ", reg.score(features, targets))
 
     def test(self, dataset):
-        targets, features = self.__process(dataset)
+        features, targets = self.__process(dataset)
 
         reg = self.__reg
         print("Score Testing: ", reg.score(features, targets))
 
     def selection(self, train_data, test_data):
-        train_targets, train_features = self.__process(train_data)
-        test_targets, test_features = self.__process(test_data)
+        # process data
+        train_features, train_targets = self.__process(train_data)
+        test_features, test_targets = self.__process(test_data)
+        # sklearn feature selection
         F_values, _ = f_regression(train_features, train_targets)
 
+        # sort the column by f values
         features_and_f_values = list(zip(train_data.columns, F_values))
         features_and_f_values.sort(key=lambda x: x[1], reverse=True)
 
+        # output the importance of features
+        print(features_and_f_values)
+
+        # compare the different of features
         features_num_seq = range(1, len(train_data.columns)+1)
         result_test_score = list()
         result_train_score = list()
@@ -54,7 +62,8 @@ class Trader:
 
             result_train_score.append(reg.score(train_selected_features, train_targets))
             result_test_score.append(reg.score(test_selected_features, test_targets))
-        
+
+        # plot the result
         plt.plot(features_num_seq, result_train_score, marker='o', label='train')
         plt.plot(features_num_seq, result_test_score, marker='*', label='test')
         plt.xticks(features_num_seq)
@@ -65,11 +74,14 @@ class Trader:
 
     def predict_action(self, row):
         input_data = row.values.reshape(1, -1)
+        # predict the open price of tomorrow
         tomorrow_price = self.__reg.predict(input_data)[0]
-        today_price = row[0]
+
         # define variables
+        today_price = row[0]
         gap = tomorrow_price - today_price
 
+        # auto trading stragety
         if self.__status == 0:
             self.__buy_price = today_price
             self.__status = 1
@@ -80,8 +92,6 @@ class Trader:
         else:
             return '0'
 
-    # def re_training(self, i):
-    #     print(i)
 
 def load_data(file_name):
     titles = ['open', 'high', 'low', 'close']
@@ -89,6 +99,7 @@ def load_data(file_name):
     df.columns = titles
     
     return df
+
 
 if __name__ == '__main__':
     # You should not modify this part.
@@ -117,19 +128,22 @@ if __name__ == '__main__':
     testing_data = load_data(args.testing)
     trader = Trader()
 
-    # feature selection
     if args.select:
+        # feature selection
         trader.selection(training_data, testing_data)
     else:
+        # training model
         trader.train(training_data, args.score)
+
+        # output score
         if args.score:
             trader.test(testing_data)
+        
         # output result
         with open(args.output, 'w') as output_file:
             for index, row in testing_data.iterrows():
-                # We will perform your action as the open price in the next day.
                 action = trader.predict_action(row)
                 output_file.write(action + '\n')
 
-                # this is your option, you can leave it empty.
-                # trader.re_training(i)
+        # output message
+        print('Successful output the stragety result to \'%s\'.' % args.output)
