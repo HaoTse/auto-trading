@@ -25,5 +25,5 @@ $ python calc.py
 ## Result
 | mehtod       | profit |
 | ------------ | ------ |
-| buy-and-hold | 51.04  |
-| greedy       | 76.73  |
+| buy-and-hold | 45.04  |
+| greedy       |   |

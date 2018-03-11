@@ -17,8 +17,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     strategy_data = load_data(args.strategy)
-    trading_data = load_data(args.trading).iloc[:, [0, 3]]
-    
+    trading_data = load_data(args.trading).iloc[1:, [0, 3]]
+
     total = 0
     status = 0
     for index, row in strategy_data.iterrows():

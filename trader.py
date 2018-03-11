@@ -142,8 +142,9 @@ if __name__ == '__main__':
         # output result
         with open(args.output, 'w') as output_file:
             for index, row in testing_data.iterrows():
+                if index != 0:
+                    output_file.write(action + '\n')
                 action = trader.predict_action(row)
-                output_file.write(action + '\n')
 
         # output message
         print('Successful output the stragety result to \'%s\'.' % args.output)
