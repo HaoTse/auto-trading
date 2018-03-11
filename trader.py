@@ -82,7 +82,7 @@ class Trader:
         gap = tomorrow_price - today_price
 
         # auto trading stragety
-        if self.__status == 0:
+        if self.__status == 0 and gap > 0:
             self.__buy_price = today_price
             self.__status = 1
             return '1'
