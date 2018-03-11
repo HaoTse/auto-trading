@@ -7,7 +7,7 @@ from sklearn.feature_selection import f_regression
 class Trader:
     __reg = linear_model.LinearRegression()
     __status = 0
-    __buy_price = 0
+    __buy_price = [0]
 
     def __process(self, dataset):
         features = dataset.iloc[:-1]
@@ -82,12 +82,18 @@ class Trader:
         gap = tomorrow_price - today_price
 
         # auto trading stragety
-        if self.__status == 0 and gap > 0:
-            self.__buy_price = today_price
-            self.__status = 1
+        if gap > 0:
+            if self.__status == 1:
+                return '0'
+            self.__buy_price.append(today_price)
+            self.__buy_price.sort()
+            self.__status += 1
             return '1'
-        elif self.__status == 1 and gap < 0 and tomorrow_price > self.__buy_price:
-            self.__status = 0
+        elif gap < 0 and self.__status != -1 and tomorrow_price > self.__buy_price[-1]:
+            if self.__status == -1:
+                return '0'
+            self.__buy_price.pop()
+            self.__status -= 1
             return '-1'
         else:
             return '0'
