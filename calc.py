@@ -23,15 +23,17 @@ if __name__ == '__main__':
     status = 0
     for index, row in strategy_data.iterrows():
         if row[0] == 1:
-            status = 1
+            status += 1
             total = total - trading_data.iloc[index, 0]
         elif row[0] == -1:
-            status = 0
+            status -= 1
             total = total + trading_data.iloc[index, 0]
         else:
             continue
 
     if status == 1:
         total += trading_data.iloc[-1, 1]
+    elif status == -1:
+        total -= trading_data.iloc[-1, 1]        
 
     print('Profit: ' + str(total))
