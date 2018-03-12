@@ -10,10 +10,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--strategy',
                         default='output.csv',
-                        help='input strategy file name')
+                        help='input action file name')
     parser.add_argument('--trading',
                         default='testing_data.csv',
-                        help='input trading data file name')
+                        help='input stock file name')
     args = parser.parse_args()
 
     strategy_data = load_data(args.strategy)

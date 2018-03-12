@@ -15,22 +15,28 @@ $ python calc.py
 ```
 會輸出獲利成果
 
-> [official StockProfitCalculator](https://github.com/NCKU-CCS/StockProfitCalculator)
+> [official Stock Profit Calculator](https://github.com/NCKU-CCS/StockProfitCalculator)
 
 ### usage
 ```shell
 trader.py [-h] [--training TRAINING] [--testing TESTING]
-                 [--output OUTPUT] [-s] [--score]
+                 [--output OUTPUT] [--score]
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --training TRAINING  input training data file name
+  --testing TESTING    input testing data file name
+  --output OUTPUT      output file name
+  --score              display the model score
 ```
 
-### optional arguments
 ```shell
--h, --help           show this help message and exit
---training TRAINING  input training data file name
---testing TESTING    input testing data file name
---output OUTPUT      output file name
--s, --select         feature selection mode
---score              compute score
+calc.py [-h] [--strategy STRATEGY] [--trading TRADING]
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --strategy STRATEGY  input action file name
+  --trading TRADING    input stock file name
 ```
 
 ## Method
@@ -40,6 +46,8 @@ Socre Training:  0.9951864824553518
 Score Testing:  0.9909212274108665
 ```
 因此使用 linear regression model 來預測隔天的 open price，並根據 stragety 來做動作
+
+- 測試使用 classification 的方法發現準確度不如 linear regression，猜測此 data 分佈較符合 linear regression 的特性
 
 
 ## Strategy
@@ -61,6 +69,3 @@ Score Testing:  0.9909212274108665
 | ------------ | ------ |
 | buy-and-hold | 45.04  |
 | trend        | 63.87  |
-
-## Todo
-- 使用 linear regression 雖然預測的成效分數不錯，但是可能會有預測結果與真實情況是差不多的，不過事實上會造成上漲或下跌的預測錯誤的情形，因此可以試著使用 classifer 的方法來預測會是上漲還是下跌來比較

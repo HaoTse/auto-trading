@@ -30,48 +30,6 @@ class Trader:
         reg = self.__reg
         print("Score Testing: ", reg.score(features, targets))
 
-    def selection(self, train_data, test_data):
-        # process data
-        train_features, train_targets = self.__process(train_data)
-        test_features, test_targets = self.__process(test_data)
-        # sklearn feature selection
-        F_values, _ = f_regression(train_features, train_targets)
-
-        # sort the column by f values
-        features_and_f_values = list(zip(train_data.columns, F_values))
-        features_and_f_values.sort(key=lambda x: x[1], reverse=True)
-
-        # output the importance of features
-        print(features_and_f_values)
-
-        # compare the different of features
-        features_num_seq = range(1, len(train_data.columns)+1)
-        result_test_score = list()
-        result_train_score = list()
-        for num in features_num_seq:
-            selected_features = [
-                feature_and_f_value[0]
-                for feature_and_f_value in features_and_f_values[:num]
-            ]
-
-            train_selected_features = train_features.loc[:, selected_features]
-            test_selected_features = test_features.loc[:, selected_features]
-
-            reg = linear_model.LinearRegression()
-            reg.fit(train_selected_features, train_targets)
-
-            result_train_score.append(reg.score(train_selected_features, train_targets))
-            result_test_score.append(reg.score(test_selected_features, test_targets))
-
-        # plot the result
-        plt.plot(features_num_seq, result_train_score, marker='o', label='train')
-        plt.plot(features_num_seq, result_test_score, marker='*', label='test')
-        plt.xticks(features_num_seq)
-        plt.legend()
-        plt.xlabel('Number of features used')
-        plt.ylabel('Score')
-        plt.show()
-
     def predict_action(self, row):
         input_data = row.values.reshape(1, -1)
         # predict the open price of tomorrow
@@ -121,12 +79,9 @@ if __name__ == '__main__':
     parser.add_argument('--output',
                         default='output.csv',
                         help='output file name')
-    parser.add_argument('-s', '--select',
-                        action='store_true',
-                        help='feature selection mode')
     parser.add_argument('--score',
                         action='store_true',
-                        help='compute score')
+                        help='display the model score')
     args = parser.parse_args()
     
     # load data
@@ -134,24 +89,20 @@ if __name__ == '__main__':
     testing_data = load_data(args.testing)
     trader = Trader()
 
-    if args.select:
-        # feature selection
-        trader.selection(training_data, testing_data)
-    else:
-        # training model
-        trader.train(training_data, args.score)
+    # training model
+    trader.train(training_data, args.score)
 
-        # output score
-        if args.score:
-            trader.test(testing_data)
-        
-        # output result
-        action = 0
-        with open(args.output, 'w') as output_file:
-            for index, row in testing_data.iterrows():
-                if index != 0:
-                    output_file.write(action + '\n')
-                action = trader.predict_action(row)
+    # output score
+    if args.score:
+        trader.test(testing_data)
+    
+    # output result
+    action = 0
+    with open(args.output, 'w') as output_file:
+        for index, row in testing_data.iterrows():
+            if index != 0:
+                output_file.write(action + '\n')
+            action = trader.predict_action(row)
 
-        # output message
-        print('Successful output the stragety result to \'%s\'.' % args.output)
+    # output message
+    print('Successful output the stragety result to \'%s\'.' % args.output)
