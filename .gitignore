@@ -105,3 +105,6 @@ ENV/
 
 # IDE config file
 .vscode
+
+# picture
+*.png

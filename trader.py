@@ -146,6 +146,7 @@ if __name__ == '__main__':
             trader.test(testing_data)
         
         # output result
+        action = 0
         with open(args.output, 'w') as output_file:
             for index, row in testing_data.iterrows():
                 if index != 0:
