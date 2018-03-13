@@ -1,11 +1,11 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn import linear_model
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.feature_selection import f_regression
 
 
 class Trader:
-    __reg = linear_model.LinearRegression()
+    __reg = RandomForestRegressor()
     __status = 0
     __buy_price = [0]
 

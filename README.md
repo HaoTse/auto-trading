@@ -45,15 +45,14 @@ optional arguments:
 ```
 
 ## Method
-輸入當天的 open, high, low, close 四個值作為 features，並將隔天的 open 作為 targets，將 （features, targets）做 linear regression 的訓練，發現成效不錯
+輸入當天的 open, high, low, close 四個值作為 features，並將隔天的 open 作為 targets，將 （features, targets）做 random forest regression 的訓練，發現成效不錯
 ```shell
-Socre Training:  0.9951864824553518
-Score Testing:  0.9909212274108665
+Socre Training:  0.9987994882767667
+Score Testing:  0.9748482213863732
 ```
-因此使用 linear regression model 來預測隔天的 open price，並根據 stragety 來做動作
+因此使用 regression model 來預測隔天的 open price，並根據 stragety 來做動作
 
-- 測試使用 classification 的方法發現準確度不如 linear regression，猜測此 data 分佈較符合 linear regression 的特性
-
+- 測試使用 classification 的方法發現準確度不如 regression，猜測此 data 分佈較符合 regression 的特性
 
 ## Strategy
 ### buy-and-hold (baseline)
