@@ -1,6 +1,11 @@
 # Auto trading
 
 ## Prerequisite
+
+### enviornment
+- python 3.6.4
+
+### requirements
 ```shell
 pip install -r requirements.txt
 ```
@@ -65,7 +70,7 @@ Score Testing:  0.9909212274108665
 2. 當預測股市下跌時，會認為是長到最高點後開始下跌，判斷此時賣出若為賺錢就將股票賣出
 
 ## Result
-| mehtod       | profit |
+| strategy     | profit |
 | ------------ | ------ |
 | buy-and-hold | 45.04  |
 | trend        | 63.87  |
